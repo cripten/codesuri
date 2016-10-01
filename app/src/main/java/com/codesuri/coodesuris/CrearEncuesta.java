@@ -17,82 +17,93 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.ViewGroup.LayoutParams;
 
-public class CrearEncuesta extends AppCompatActivity implements View.OnClickListener{
-    LinearLayout llCampos;//permite contener los campos creados Verticalmente
-    RadioGroup rg;
-    Button btnOp;
-    Button btnAddCampos;//permite crear campos
-    Integer ContCamp = 0;//sirve para colocar un id diferente a los campos
+public class CrearEncuesta extends AppCompatActivity {
+    //contendra los radiobutton
+    RelativeLayout rlmain;//contendrá todo el contenido
+    RadioButton[] arrRb = new RadioButton[6];
+    EditText[] arrEt = new EditText[6];
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_encuesta);
 
-        llCampos = (LinearLayout)findViewById(R.id.llCampos);
-        btnAddCampos = (Button)findViewById(R.id.btnAddCampo);
-        //comienza el escucha
-        btnAddCampos.setOnClickListener(this);
+        rlmain = (RelativeLayout)findViewById(R.id.rlmain);
 
-    }
 
-   @Override
-    public void onClick(View v) {
-        switch(v.getId()){
-            //crea los campos donde iran las preguntas del formulario
-            case R.id.btnAddCampo:
-                EditText Campo = new EditText(this);
-                Campo.setId(ContCamp);
-                Campo.setHint("Ingrese una pregunta:");
-                Campo.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-                llCampos.addView(Campo);
+        ScrollView sv = new ScrollView(this);
+        RelativeLayout rl = new RelativeLayout(this);
+        rl.setId(99);
 
-                btnOp = new Button(this);
-                btnOp.setText("Add");
-                btnOp.setId(ContCamp);
-                btnOp.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-                btnOp.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CrearRB();
-                    }
-                });
-                llCampos.addView(btnOp);
+        sv.addView(rl,new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+
+        RadioGroup rg = new RadioGroup(this);
+        rg.setId(100);
+
+        RelativeLayout.LayoutParams p0 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
+        p0.addRule(RelativeLayout.ALIGN_PARENT_TOP,RelativeLayout.TRUE);
+
+
+        for(int i = 1; i<6;i++){
+
+            RadioButton rb = new RadioButton(this);
+            arrRb[i] = rb;
+            arrRb[i].setId(i);
+
+
+            RelativeLayout.LayoutParams pRb = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+            if(i>1){
+                pRb.addRule(RelativeLayout.BELOW,arrRb[i-1].getId());
+            }
 
 
 
-                rg = new RadioGroup(this);
-                rg.setOrientation(LinearLayout.HORIZONTAL);
-                rg.setId(ContCamp);
-                rg.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-                llCampos.addView(rg);
+           /* EditText et = new EditText(this);
+            arrEt[i] = et;
+            arrEt[i].setHint("Opcion"+i);
+            arrEt[i].setId(i);
 
+            RelativeLayout.LayoutParams pEt = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+            pEt.addRule(RelativeLayout.RIGHT_OF,arrRb[i].getId());
+            pEt.setMargins(0,-10,0,0);
 
-                CrearRB();
+            if(i>1){
+                pEt.addRule(RelativeLayout.BELOW,arrRb[i-1].getId());
+            }*/
 
-                ContCamp++;
+            rg.addView(arrRb[i],pRb);
 
-                ////////////////////////////////////////////////////////////////////////////////////////////
+        }
+        rl.addView(rg,p0);
 
+        for(int i = 1; i<6;i++){
 
-            break;
+            EditText et = new EditText(this);
+            arrEt[i] = et;
+            arrEt[i].setHint("Opcion"+i);
+            arrEt[i].setId(i);
+
+            RelativeLayout.LayoutParams pEt = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+            pEt.addRule(RelativeLayout.RIGHT_OF,arrRb[i].getId());
+            pEt.setMargins(0,-10,0,0);
+
+            if(i>1){
+                pEt.addRule(RelativeLayout.BELOW,arrRb[i-1].getId());
+            }
+
+            rl.addView(arrEt[i],pEt);
 
         }
 
-    }
 
-    public void CrearRB(){
+        rlmain.addView(sv);
 
-        RadioButton rbOp = new RadioButton(this);
-        rbOp.setId(ContCamp);
-        rg.addView(rbOp);
 
-        EditText etOp = new EditText(this);
-        etOp.setHint("Opción");
-        etOp.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
 
-        rg.addView(etOp);
 
 
     }
+
+
 }
