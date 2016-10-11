@@ -17,11 +17,17 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.view.ViewGroup.LayoutParams;
 
-public class CrearEncuesta extends AppCompatActivity {
+public class CrearEncuesta extends AppCompatActivity implements View.OnClickListener{
     //contendra los radiobutton
     RelativeLayout rlmain;//contendrá todo el contenido
-    RadioButton[] arrRb = new RadioButton[6];
-    EditText[] arrEt = new EditText[6];
+    LinearLayout FirstLL;
+    LinearLayout ThirdLL;
+    Button btnAddCamp;
+    int i = 0;//sirve como contador para los id
+    int cont = 1;
+    RadioButton[] arrRb = new RadioButton[6];//almacena los contenidos de los radiobutton
+    EditText[] arrEt = new EditText[6];//almacena los contenidos de los EditText
+    int margintop = 0;
 
 
     @Override
@@ -29,81 +35,82 @@ public class CrearEncuesta extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crear_encuesta);
 
-        rlmain = (RelativeLayout)findViewById(R.id.rlmain);
+        //Sera el layout containt all
+        RelativeLayout relativeLayout = new RelativeLayout(this);
+        relativeLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
 
-
+        //ScrollView
         ScrollView sv = new ScrollView(this);
-        RelativeLayout rl = new RelativeLayout(this);
-        rl.setId(99);
+        sv.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
 
-        sv.addView(rl,new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+        //Button agregar campos
+        btnAddCamp = new Button(this);
+        btnAddCamp.setId(1);
+        btnAddCamp.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+        btnAddCamp.setText("Agregar Campo");
+        btnAddCamp.setOnClickListener(this);
 
-        RadioGroup rg = new RadioGroup(this);
-        rg.setId(100);
+        // First layout
+        FirstLL = new LinearLayout(this);
+        FirstLL.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+        FirstLL.setOrientation(LinearLayout.VERTICAL);
 
-        RelativeLayout.LayoutParams p0 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.MATCH_PARENT);
-        p0.addRule(RelativeLayout.ALIGN_PARENT_TOP,RelativeLayout.TRUE);
+        RelativeLayout.LayoutParams firstLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+        firstLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        firstLayoutParams.addRule(RelativeLayout.BELOW,btnAddCamp.getId());
+        firstLayoutParams.setMargins(0,20,0,0);
 
+        //Second layout
+        ThirdLL = new LinearLayout(this);
+        FirstLL.setOrientation(LinearLayout.VERTICAL);
 
-        for(int i = 1; i<6;i++){
-
-            RadioButton rb = new RadioButton(this);
-            arrRb[i] = rb;
-            arrRb[i].setId(i);
-
-
-            RelativeLayout.LayoutParams pRb = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-            if(i>1){
-                pRb.addRule(RelativeLayout.BELOW,arrRb[i-1].getId());
-            }
-
-
-
-           /* EditText et = new EditText(this);
-            arrEt[i] = et;
-            arrEt[i].setHint("Opcion"+i);
-            arrEt[i].setId(i);
-
-            RelativeLayout.LayoutParams pEt = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-            pEt.addRule(RelativeLayout.RIGHT_OF,arrRb[i].getId());
-            pEt.setMargins(0,-10,0,0);
-
-            if(i>1){
-                pEt.addRule(RelativeLayout.BELOW,arrRb[i-1].getId());
-            }*/
-
-            rg.addView(arrRb[i],pRb);
-
-        }
-        rl.addView(rg,p0);
-
-        for(int i = 1; i<6;i++){
-
-            EditText et = new EditText(this);
-            arrEt[i] = et;
-            arrEt[i].setHint("Opcion"+i);
-            arrEt[i].setId(i);
-
-            RelativeLayout.LayoutParams pEt = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-            pEt.addRule(RelativeLayout.RIGHT_OF,arrRb[i].getId());
-            pEt.setMargins(0,-10,0,0);
-
-            if(i>1){
-                pEt.addRule(RelativeLayout.BELOW,arrRb[i-1].getId());
-            }
-
-            rl.addView(arrEt[i],pEt);
-
-        }
+        RelativeLayout.LayoutParams thirdLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+        thirdLayoutParams.addRule(RelativeLayout.ALIGN_BASELINE,FirstLL.getId());
+        thirdLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
+        thirdLayoutParams.addRule(RelativeLayout.LEFT_OF,FirstLL.getId());
+        thirdLayoutParams.setMargins(55,0,0,0);
 
 
-        rlmain.addView(sv);
 
 
+        relativeLayout.addView(btnAddCamp);
+        relativeLayout.addView(FirstLL,firstLayoutParams);
+        relativeLayout.addView(ThirdLL,thirdLayoutParams);
+        setContentView(relativeLayout);
 
 
 
     }
 
 
+    @Override
+    public void onClick(View v) {
+       // switch(v.getId()){
+            //case 1:
+                cont = 0;
+                //Radio group
+                RadioGroup rg = new RadioGroup(this);
+                rg.setId(1+i);
+                rg.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+
+                //RadioButton
+                RadioButton rb = new RadioButton(this);
+                rb.setId(1+i);
+                RadioGroup.LayoutParams rbParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+                rbParams.setMargins(0,margintop,0,0);
+                rb.setLayoutParams(rbParams);
+                rg.addView(rb);
+
+                EditText et = new EditText(this);
+                et.setId(1+i);
+                et.setText("Opcion "+cont);
+                LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
+                etParams.setMargins(0,0,0,0);
+                margintop = 0;
+
+                ThirdLL.addView(et,etParams);
+                FirstLL.addView(rg);
+           // break;
+      //  }
+    }
 }
