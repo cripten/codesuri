@@ -22,30 +22,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CrearEncuesta extends AppCompatActivity implements View.OnClickListener{
-    //contendra los radiobutton
-    EditText etTitulo;
-    LinearLayout llques;
-    LinearLayout llrg;
-    RelativeLayout rlmain;//contendrá todo el contenido
+
     RelativeLayout content;//contendrá todo el contenido
-    Button btnAddCamp;
-    int i = 0;//sirve como contador para los id
-    int cont = 1;
-    RadioButton[] arrRb = new RadioButton[6];//almacena los contenidos de los radiobutton
-    EditText[] arrEt = new EditText[6];//almacena los contenidos de los EditText
-    int margintop = 0;
-    int j = 160;
-    int margintopLL = 1;
-    Button btnOp;
-    RadioGroup rg;
-    RelativeLayout relativeLayout;
+    ScrollView sv;//Scroll view para moverse en la pantalla
+    EditText etTitulo;// Va el titulo de la encuesta
+    Button btnAddCamp;// Sirve para agregar nuevos campos
+    RelativeLayout.LayoutParams llp;//almacena los parametros de los LinearLayout
     ArrayList<LinearLayout> quesLL = new ArrayList<LinearLayout>();
     ArrayList<LinearLayout> rgLL = new ArrayList<LinearLayout>();
     ArrayList<LinearLayout> etLL = new ArrayList<LinearLayout>();
-    ArrayList<LinearLayout> btnLL = new ArrayList<LinearLayout>();
-    int index = 0;
-    ScrollView sv;
-    LinearLayout rl;
+    ArrayList<EditText> etques = new ArrayList<EditText>();
+    ArrayList<RadioGroup> rgques = new ArrayList<RadioGroup>();
+    int index = 1;//Sirve como identificador de las posiciones de los arreglos de quesLL,rgLL,etLL,etques y rgques
+    int i = 1;//sirve como contador para los id de los valores de quesLL,rgLL,etLL,etques y rgques
+    ArrayList<RadioButton> rbques = new  ArrayList<RadioButton>();//almacena los contenidos de los radiobutton
+    ArrayList<EditText> etrbques = new ArrayList<EditText>();//almacena los contenidos de los EditText
+    int subindex = 1;//Sirve como identificador de las posiciones de los arreglos de rbques y etrbques
+    int j = 2;//sirve como contador para los id de los valores de rbques y etrbques
+    int margintop = 20;// aumenta el margin rbques
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,33 +57,21 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
 
         //EditText
         etTitulo = (EditText)findViewById(R.id.etTitulo);
+
         //Button agregar campos
         btnAddCamp =(Button)findViewById(R.id.btnAddCamp);
         btnAddCamp.setOnClickListener(this);
 
-        // layout contendrá los campos
-         llques = (LinearLayout)findViewById(R.id.llques);
-         llrg = (LinearLayout)findViewById(R.id.llques);
 
 
+        quesLL.add(0,new LinearLayout(this));
+        rgLL.add(0,new LinearLayout(this));
+        etLL.add(0,new LinearLayout(this));
+        etques.add(0,new EditText(this));
+        rgques.add(0,new RadioGroup(this));
+        rbques.add(0,new RadioButton(this));
+        etrbques.add(0,new EditText(this));
 
-        //Linear layout para ocupar la posicion cero de los arraylist
-        /*quesLL.add(index,new LinearLayout(this));
-        quesLL.get(index).setId(index);
-        quesLL.get(index).setOrientation(LinearLayout.VERTICAL);
-
-        RelativeLayout.LayoutParams quesp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-        quesp.addRule(RelativeLayout.BELOW,btnAddCamp.getId());*/
-        quesLL.add(index,new LinearLayout(this));
-        rgLL.add(index,new LinearLayout(this));
-        etLL.add(index,new LinearLayout(this));
-        btnLL.add(index,new LinearLayout(this));
-
-
-       //agrega los objetos a  sus correspondientes vistas
-
-        //content.addView(quesLL.get(index));//,quesp);
-        index++;
 
 
     }
@@ -95,154 +80,89 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
 
-        //Question Layout
+        //---------------------LinearLayout for Questions----------------------------------
+        RelativeLayout.LayoutParams llp1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         if(index == 1){
-            quesLL.add(index,llques);
-            rgLL.add(index,llrg);
-        }else{
-            quesLL.add(index,new LinearLayout(this));
-            quesLL.get(index).setId(index);
-            quesLL.get(index).setOrientation(LinearLayout.VERTICAL);
-
-            RelativeLayout.LayoutParams quesp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-            quesp.addRule(RelativeLayout.BELOW,rgLL.get(index-1).getId());
-            quesp.setMargins(0,90,0,0);
-
-            //RadioGroup Layout
-            rgLL.add(index,new LinearLayout(this));
-            rgLL.get(index).setId(index);
-            rgLL.get(index).setOrientation(LinearLayout.VERTICAL);
-
-            RelativeLayout.LayoutParams rgp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-            rgp.addRule(RelativeLayout.BELOW,quesLL.get(index).getId());
-            rgp.setMargins(0,40,0,0);
-
-
-            content.addView(quesLL.get(index),quesp);
-            content.addView(rgLL.get(index),rgp);
+            llp1.addRule(RelativeLayout.BELOW, btnAddCamp.getId());
         }
+        else{
+            llp1.addRule(RelativeLayout.BELOW, rgLL.get(index-1).getId());
+        }
+        quesLL.add(index,new LinearLayout(this));
+        quesLL.get(index).setId(i);
+        content.addView(quesLL.get(index),llp1);
 
-        //Edit text question
-        EditText etQ = new EditText(this);
-        etQ.setId(1+i);
-        etQ.setHint("Escriba su Pregunta");
-        LinearLayout.LayoutParams etQParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-        quesLL.get(index).addView(etQ,etQParams);
+        //---------------------LinearLayout for RadioGroup----------------------------------
+        Params();
 
+        rgLL.add(index,new LinearLayout(this));
+        rgLL.get(index).setId(i+1);
+        rgLL.get(index).setOrientation(LinearLayout.VERTICAL);
+        content.addView(rgLL.get(index),llp);
 
-
-        rgLL.get(index).addView(rg);
-
-        //EditText
-        EditText et = new EditText(this);
-        et.setId(1+i);
-        et.setHint("Opcion "+cont);
-        LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-        //etParams.setMargins(0,0,0,0);
-        rgLL.get(index).addView(et,etParams);
-
-
-        //EditText Layout
-      /*  etLL.add(index,new LinearLayout(this));
-        etLL.get(index).setId(index);
+        //--------------------LinearLayout for Edittext---------------------------------------
+        Params();
+        llp.addRule(RelativeLayout.RIGHT_OF,rgLL.get(index).getId());
+        etLL.add(index,new LinearLayout(this));
+        etLL.get(index).setId(i+2);
         etLL.get(index).setOrientation(LinearLayout.VERTICAL);
-
-        RelativeLayout.LayoutParams etp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-        etp.addRule(RelativeLayout.BELOW,quesLL.get(index).getId());
-        etp.setMargins(55,j,0,0);
-
-        // Button ADD  Layout
-        btnLL.add(index,new LinearLayout(this));
-        btnLL.get(index).setId(index);
-        btnLL.get(index).setOrientation(LinearLayout.VERTICAL);
-
-        RelativeLayout.LayoutParams btnp = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-        btnp.addRule(RelativeLayout.BELOW,quesLL.get(index).getId());
-        btnp.setMargins(240,j,0,0);
-
-        //Edit text question
-        EditText etQ = new EditText(this);
-        etQ.setId(1+i);
-        etQ.setHint("Escriba su Pregunta");
-        LinearLayout.LayoutParams etQParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
-        quesLL.get(index).addView(etQ,etQParams);
+        content.addView(etLL.get(index),llp);
 
 
-        //Radio group
-        rg = new RadioGroup(this);
-        rg.setId(1+i);
-        rg.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+        //EditText for Questions
+        etques.add(index,new EditText(this));
+        etques.get(index).setId(i+3);
+        etques.get(index).setHint("Escriba su Pregunta:");
+        etques.get(index).setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+        quesLL.get(index).addView(etques.get(index));
+
+       //RadioGroup for RadioButton
+        rgques.add(index,new RadioGroup(this));
+        rgques.get(index).setId(i+4);
+        rgques.get(index).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
         CrearRB();
-        rgLL.get(index).addView(rg);
-        margintop = 25;
+        rgLL.get(index).addView(rgques.get(index));
 
-       // Button
-        Button btnAdd = new Button(this);
-        btnAdd.setId(1+i);
-        btnAdd.setText("Add");
-        btnAdd.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CrearRB();
-            }
-        });
-        btnLL.get(index).addView(btnAdd);
-        //Agregar Objetos a las vistas
-        //content.addView(etLL.get(index),etp);
-        //content.addView(btnLL.get(index),btnp);
+
         index++;
-        */
-
-
-
+        i+= 5;
 
     }
 
-    public void CrearRB(){
+   //Method for add Params to LinearLayout
+    public void Params(){
 
-       for(int p=1;p<4;p++){
+        llp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        llp.addRule(RelativeLayout.BELOW, quesLL.get(index).getId());
 
-           //RadioButton
-           RadioButton rb = new RadioButton(this);
-           rb.setId(1+i);
-           RadioGroup.LayoutParams rbParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-           rbParams.setMargins(0,margintop,0,0);
-           rb.setLayoutParams(rbParams);
-           rg.addView(rb);
+    }
+    //Method for add RadioButton with EditText
+    public void CrearRB() {
 
-           //EditText
-           EditText et = new EditText(this);
-           et.setId(1+i);
-           et.setHint("Opcion "+cont);
-           LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-           //etParams.setMargins(0,0,0,0);
-           etLL.get(index).addView(et,etParams);
+        for (int p = 1; p <= 4; p++) {
 
-           margintop = 25;
+            //RadioButton
+            rbques.add(subindex,new RadioButton(this));
+            rbques.get(subindex).setId(j);
+            RadioGroup.LayoutParams rbParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+            rbParams.setMargins(0, margintop, 0, 0);
+            rbques.get(subindex).setLayoutParams(rbParams);
+            rgques.get(index).addView(rbques.get(subindex));
 
-       }
-        margintop=0;
-        j = 180;
+            //EditText
+            etrbques.add(subindex,new EditText(this));
+            etrbques.get(subindex).setId(j);
+            etrbques.get(subindex).setHint("Opcion "+p);
+            etrbques.get(subindex).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
+            etLL.get(index).addView(etrbques.get(subindex));
 
-       /* //RadioButton
-        RadioButton rb = new RadioButton(this);
-        rb.setId(1+i);
-        RadioGroup.LayoutParams rbParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-       // rbParams.setMargins(0,margintop,0,0);
-        rb.setLayoutParams(rbParams);
-        rg.addView(rb);
+            margintop = 27;
+            subindex++;
+            j++;
 
-        //EditText
-        EditText et = new EditText(this);
-        et.setId(1+i);
-        et.setText("Opcion "+cont);
-        LinearLayout.LayoutParams etParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT);
-        //etParams.setMargins(0,0,0,0);
-        etLL.get(index).addView(et,etParams);
 
-        margintop = 25;*/
-
+        }
+        margintop = 20;
     }
 
 
