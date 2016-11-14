@@ -19,18 +19,18 @@ import android.widget.TextView;
 import android.view.ViewGroup.LayoutParams;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CrearEncuesta extends AppCompatActivity implements View.OnClickListener{
 
     RelativeLayout content;//contendrá todo el contenido
-    ScrollView sv;//Scroll view para moverse en la pantalla
     EditText etTitulo;// Va el titulo de la encuesta
     Button btnAddCamp;// Sirve para agregar nuevos campos
     RelativeLayout.LayoutParams llp;//almacena los parametros de los LinearLayout
-    ArrayList<LinearLayout> quesLL = new ArrayList<LinearLayout>();
-    ArrayList<LinearLayout> rgLL = new ArrayList<LinearLayout>();
-    ArrayList<LinearLayout> etLL = new ArrayList<LinearLayout>();
+    ArrayList<LinearLayout> quesLL = new ArrayList<LinearLayout>();//Linearlayout para contener preguntas
+    ArrayList<LinearLayout> rgLL = new ArrayList<LinearLayout>();//Linearlayout para contener radio group
+    ArrayList<LinearLayout> etLL = new ArrayList<LinearLayout>();//Linearlayout para contener edittext
     ArrayList<EditText> etques = new ArrayList<EditText>();
     ArrayList<RadioGroup> rgques = new ArrayList<RadioGroup>();
     int index = 1;//Sirve como identificador de las posiciones de los arreglos de quesLL,rgLL,etLL,etques y rgques
@@ -40,6 +40,9 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
     int subindex = 1;//Sirve como identificador de las posiciones de los arreglos de rbques y etrbques
     int j = 2;//sirve como contador para los id de los valores de rbques y etrbques
     int margintop = 20;// aumenta el margin rbques
+    Button btnSaveCamp;
+
+    String tit;
 
 
 
@@ -52,9 +55,6 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
         //Sera el layout containt all
         content = (RelativeLayout)findViewById(R.id.content);
 
-        //ScrollView
-        sv = (ScrollView)findViewById(R.id.sv);
-
         //EditText
         etTitulo = (EditText)findViewById(R.id.etTitulo);
 
@@ -62,7 +62,8 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
         btnAddCamp =(Button)findViewById(R.id.btnAddCamp);
         btnAddCamp.setOnClickListener(this);
 
-
+        //Button save camps
+        btnSaveCamp =(Button)findViewById(R.id.btnSaveCamp);
 
         quesLL.add(0,new LinearLayout(this));
         rgLL.add(0,new LinearLayout(this));
@@ -71,6 +72,38 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
         rgques.add(0,new RadioGroup(this));
         rbques.add(0,new RadioButton(this));
         etrbques.add(0,new EditText(this));
+
+
+
+        btnSaveCamp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tit = etTitulo.getText().toString();
+                //estancia la clase Dpreguntas y envia el contexto
+                Dencuesta helper = new Dencuesta(CrearEncuesta.this);
+                helper.insertarTitulos(tit);
+
+                String pregunta;
+                String[] opc = new String[5];
+                int cont = 1;
+
+                for(int k= 1; k < etques.size();k++){
+                    pregunta = etques.get(k).getText().toString();
+
+                    for(int m = 1; m <=4; m++){
+                        opc[m] = etrbques.get(cont).getText().toString();
+                        cont++;
+
+                    }
+
+                    Epreguntas obj = new Epreguntas(pregunta,opc[1],opc[2],opc[3],opc[4]);
+                    helper.insertarPreguntas(obj);
+                }
+
+                Intent intent = new Intent(CrearEncuesta.this,Encuestas.class);
+                startActivity(intent);
+            }
+        });
 
 
 
@@ -122,6 +155,7 @@ public class CrearEncuesta extends AppCompatActivity implements View.OnClickList
         rgques.get(index).setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
         CrearRB();
         rgLL.get(index).addView(rgques.get(index));
+
 
 
         index++;
